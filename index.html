@@ -50,7 +50,7 @@ body{
   -webkit-tap-highlight-color:transparent;
   -webkit-user-select:none;user-select:none;
   -webkit-touch-callout:none;
-  touch-action:manipulation;
+  touch-action:none;
   overscroll-behavior:none;
   background:var(--space);
 }
@@ -72,9 +72,6 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 #sky{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
 
-.hills{position:absolute;left:0;bottom:0;width:100%;height:24%;min-height:120px;pointer-events:none}
-.window-glow{animation:windowFlicker 5s ease-in-out infinite}
-@keyframes windowFlicker{0%,100%{opacity:1}45%{opacity:.85}50%{opacity:.55}55%{opacity:.9}}
 
 .moon{position:absolute;top:0;left:0;width:140px;height:140px;z-index:3;cursor:pointer;
   transform-origin:0 0;transform:translate3d(calc(50vw - 70px),calc(13vh - 14px),0) scale(1);
@@ -93,7 +90,10 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
 .moon-cloud.c2{top:12%;height:34%;animation-duration:61s;animation-delay:-20s}
 @keyframes cloudDrift{0%{transform:translate3d(-34%,0,0);opacity:0}18%{opacity:.9}82%{opacity:.9}100%{transform:translate3d(34%,-5%,0);opacity:0}}
 @keyframes moonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes halo{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.06);opacity:1}}
+@keyframes halo{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.moon-glow{transition:opacity .3s}
+#moonCanvas{touch-action:none}
+.deep{will-change:transform;transform:scale(1.04)}
 .moon.wiggle .moon-float{animation:moonWiggle .9s var(--ease-spring)}
 @keyframes moonWiggle{0%{transform:scale(1)}30%{transform:scale(1.1) rotate(-6deg)}60%{transform:scale(.97) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
 body.in-sky .moon{transform:translate3d(calc(100vw - 98px - env(safe-area-inset-right)),calc(18px + env(safe-area-inset-top)),0) scale(.56)}
@@ -170,8 +170,8 @@ body.final #heartGroup{animation:beat 2.4s ease-in-out 3.2s infinite}
 .cstar.wave svg{animation:wave 1.2s var(--ease-spring) var(--w) both}
 @keyframes wave{0%{transform:scale(1)}40%{transform:scale(1.9) rotate(60deg)}100%{transform:scale(1) rotate(0)}}
 
-.hint{position:absolute;left:0;right:0;top:calc(28px + env(safe-area-inset-top));z-index:6;text-align:center;padding:0 72px;
-  font-size:clamp(.78rem,3.3vw,.9rem);font-weight:500;line-height:1.6;letter-spacing:.02em;color:var(--ink-soft);opacity:0;transform:translateY(-8px);
+.hint{position:absolute;left:0;right:0;bottom:calc(5vh + 30px + env(safe-area-inset-bottom));z-index:6;text-align:center;padding:0 28px;
+  font-size:clamp(.78rem,3.3vw,.9rem);font-weight:500;line-height:1.6;letter-spacing:.02em;color:var(--ink-soft);opacity:0;transform:translateY(8px);text-shadow:0 1px 10px rgba(0,0,0,.6);
   transition:opacity .9s var(--ease-out),transform .9s var(--ease-out);pointer-events:none}
 .hint.on{opacity:1;transform:none}
 
@@ -197,6 +197,21 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);opacity:0;transform:translateY(-6px) scale(.9);transform-origin:100% 0;
   transition:opacity .4s,transform .5s var(--ease-spring);pointer-events:none}
 .toast.on{opacity:1;transform:none}
+
+.catch{position:absolute;z-index:7;left:calc(16px + env(safe-area-inset-left));top:calc(68px + env(safe-area-inset-top));height:34px;padding:0 14px;border-radius:999px;
+  display:flex;align-items:center;font-size:.86rem;font-weight:600;letter-spacing:.04em;color:var(--gold);
+  background:rgba(255,255,255,.06);box-shadow:0 0 0 1px var(--glass-line) inset;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  opacity:0;transform:scale(.6);transition:opacity .5s,transform .5s var(--ease-spring);pointer-events:none}
+.catch b{margin-left:6px;font-weight:700}
+.catch.on{opacity:1;transform:none}
+.catch.bump{animation:bump .55s var(--ease-spring)}
+@keyframes bump{40%{transform:scale(1.3)}}
+
+.float-msg{position:absolute;z-index:8;max-width:240px;text-align:center;pointer-events:none;
+  font-family:var(--serif);font-size:1.3rem;font-weight:500;line-height:1.2;color:#fff4e0;
+  text-shadow:0 0 18px rgba(255,200,150,.85),0 2px 12px rgba(0,0,0,.7);
+  animation:floatMsg 3.4s var(--ease-out) forwards}
+@keyframes floatMsg{0%{opacity:0;transform:translate(-50%,-30%) scale(.8);filter:blur(6px)}14%{opacity:1;transform:translate(-50%,-50%) scale(1);filter:blur(0)}72%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%)}}
 
 .card{position:absolute;top:0;left:0;width:100%;height:100%;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;
   padding-bottom:calc(24px + env(safe-area-inset-bottom));
@@ -257,44 +272,17 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
 </style>
 </head>
 <body>
-<canvas class="layer" id="nebula" aria-hidden="true"></canvas>
-<canvas class="layer" id="starfield" aria-hidden="true"></canvas>
+<div class="layer deep" id="deep" aria-hidden="true">
+  <canvas class="layer" id="nebula"></canvas>
+  <canvas class="layer" id="starfield"></canvas>
+</div>
 <div class="layer horizon" aria-hidden="true"></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <div class="layer grain" aria-hidden="true"></div>
 
-<svg class="hills" viewBox="0 0 1600 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-  <defs>
-    <radialGradient id="winGlow">
-      <stop offset="0" stop-color="#ffd98a" stop-opacity=".9"/>
-      <stop offset="1" stop-color="#ffb070" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="hillFar" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#16133a"/>
-      <stop offset="1" stop-color="#0b0a22"/>
-    </linearGradient>
-  </defs>
-  <path d="M0 90 C150 60 300 72 450 62 C600 52 700 40 820 46 C960 53 1050 30 1200 42 C1350 54 1480 72 1600 60 V160 H0Z" fill="url(#hillFar)"/>
-  <path d="M0 90 C150 60 300 72 450 62 C600 52 700 40 820 46 C960 53 1050 30 1200 42 C1350 54 1480 72 1600 60" fill="none" stroke="rgba(200,190,255,.3)" stroke-width=".6"/>
-  <path d="M0 118 C200 100 380 112 560 106 C700 101 800 92 900 96 C1020 101 1150 90 1300 98 C1430 105 1520 100 1600 104 V160 H0Z" fill="#0b0a20"/>
-  <g fill="#0b0a20">
-    <path d="M862 90 l8 -8 l8 8 v8 h-16z"/>
-    <path d="M830 99 l4 -12 l4 12z"/>
-    <path d="M839 98 l3 -9 l3 9z"/>
-    <path d="M902 97 l4 -13 l4 13z"/>
-    <path d="M1180 96 l4 -11 l4 11z"/>
-    <path d="M410 110 l4 -12 l4 12z"/>
-  </g>
-  <g class="window-glow">
-    <circle cx="870" cy="93.6" r="9" fill="url(#winGlow)"/>
-    <rect x="868.2" y="91.8" width="3.6" height="3.6" rx=".4" fill="#ffd98a"/>
-  </g>
-  <path d="M0 140 C200 128 400 138 600 133 C800 128 1000 134 1200 130 C1400 126 1500 132 1600 136 V160 H0Z" fill="#050512"/>
-</svg>
-
 <div class="moon" id="moon" role="button" aria-label="Луна" tabindex="-1">
   <div class="moon-float">
-    <div class="moon-glow"></div>
+    <div class="moon-glow" id="moonGlow"></div>
     <canvas id="moonCanvas"></canvas>
     <div class="moon-shine"></div>
     <canvas class="moon-cloud" id="cloudA"></canvas>
@@ -344,6 +332,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
 </button>
 
 <div class="toast" id="toast" role="status"></div>
+<div class="catch" id="catchBadge" aria-live="polite">☄ <b id="catchCount">0</b></div>
 
 <div class="final" id="final">
   <h2 class="final-title" id="finalTitle" aria-label="Это созвездие теперь твоё"></h2>
@@ -509,7 +498,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
     var base = Math.round(W * H / 330);
     var i, x, y, s, a;
     for (i = 0; i < base; i++) {
-      x = rnd() * W; y = rnd() * H * 0.92;
+      x = rnd() * W; y = rnd() * H;
       s = rnd() < 0.85 ? 0.5 + rnd() * 0.5 : 0.9 + rnd() * 0.6;
       a = 0.18 + Math.pow(rnd(), 2) * 0.7;
       g.globalAlpha = a;
@@ -518,7 +507,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
     }
     var tries = base * 5;
     for (i = 0; i < tries; i++) {
-      x = rnd() * W; y = rnd() * H * 0.92;
+      x = rnd() * W; y = rnd() * H;
       var p = bandAt(x, y, b);
       var dens = Math.exp(-(p.d / 0.14) * (p.d / 0.14)) * (0.35 + 0.65 * smooth(0.36, 0.7, nebFbm(p.s * 2.4 + 4, p.d * 5.5 + 2, 3)));
       if (rnd() > dens * 0.85) continue;
@@ -529,7 +518,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
     }
     var bright = Math.round(base / 22);
     for (i = 0; i < bright; i++) {
-      x = rnd() * W; y = rnd() * H * 0.88;
+      x = rnd() * W; y = rnd() * H;
       s = 4 + rnd() * 7;
       g.globalAlpha = 0.35 + rnd() * 0.5;
       g.drawImage(rnd() < 0.5 ? SPR.white : rnd() < 0.5 ? SPR.lilac : SPR.gold, x - s / 2, y - s / 2, s, s);
@@ -538,8 +527,46 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
     starfieldCanvas.classList.add("ready");
   }
 
-  function renderMoon() {
+  var moonTex = document.createElement("canvas");
+  var moonShadow = document.createElement("canvas");
+  var moonPhase = 0;
+  function drawPhase() {
     var c = $("moonCanvas");
+    if (c.width !== 320) { c.width = 320; c.height = 320; }
+    var g = c.getContext("2d");
+    g.clearRect(0, 0, 320, 320);
+    g.drawImage(moonTex, 0, 0);
+    var th = moonPhase * Math.PI * 0.94;
+    if (moonPhase > 0.002) {
+      var S2 = 160;
+      moonShadow.width = moonShadow.height = S2;
+      var sg = moonShadow.getContext("2d");
+      var im = sg.createImageData(S2, S2);
+      var d = im.data;
+      var Lx = -Math.sin(th), Lz = Math.cos(th);
+      for (var y = 0; y < S2; y++) {
+        for (var x = 0; x < S2; x++) {
+          var nx = (x + 0.5) / S2 * 2 - 1, ny = (y + 0.5) / S2 * 2 - 1;
+          var r2 = nx * nx + ny * ny;
+          if (r2 > 1.03) continue;
+          var nz = Math.sqrt(Math.max(0, 1 - r2));
+          var cov = (1 - Math.sqrt(r2)) * S2 * 0.5;
+          cov = cov < 0 ? 0 : cov > 1 ? 1 : cov;
+          var a = (1 - smooth(-0.07, 0.12, nx * Lx + nz * Lz)) * 0.9 * cov;
+          var i4 = (y * S2 + x) * 4;
+          d[i4] = 5; d[i4 + 1] = 6; d[i4 + 2] = 18; d[i4 + 3] = a * 255;
+        }
+      }
+      sg.putImageData(im, 0, 0);
+      g.drawImage(moonShadow, 0, 0, 320, 320);
+    }
+    var illum = (1 + Math.cos(th)) / 2;
+    $("moonGlow").style.opacity = (0.18 + 0.82 * illum).toFixed(3);
+    c.style.boxShadow = "0 0 18px 3px rgba(255,242,220," + (0.1 + 0.45 * illum).toFixed(3) + "),0 0 60px 14px rgba(255,226,190," + (0.03 + 0.17 * illum).toFixed(3) + ")";
+  }
+
+  function renderMoon() {
+    var c = moonTex;
     var S = 320;
     c.width = c.height = S;
     var g = c.getContext("2d");
@@ -717,6 +744,18 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
 
   var bgStars = [], particles = [], meteors = [], flies = [];
   var parallax = { x: 0, y: 0, tx: 0, ty: 0 };
+  var deep = $("deep");
+  var trail = [], waves = [];
+  var TRAIL_LIFE = 1600, CHARGE_TIME = 1900;
+  var hold = null, press = null;
+  var strokeId = 0, strokeN = 0, strokeDist = 0;
+  var TRAIL_PALETTE = [[255, 225, 170], [255, 172, 208], [196, 180, 255], [150, 208, 255]];
+  function trailColor(n) {
+    var f = (n * 0.035) % 4;
+    var i = Math.floor(f), t = f - i;
+    var a = TRAIL_PALETTE[i], b = TRAIL_PALETTE[(i + 1) % 4];
+    return ((a[0] + (b[0] - a[0]) * t) | 0) + "," + ((a[1] + (b[1] - a[1]) * t) | 0) + "," + ((a[2] + (b[2] - a[2]) * t) | 0);
+  }
 
   function makeStars() {
     var count = Math.round(Math.min(170, Math.max(70, (W * H) / 3200)));
@@ -726,7 +765,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
       var roll = Math.random();
       bgStars.push({
         nx: Math.random() * 1.2 - 0.1,
-        ny: Math.pow(Math.random(), 1.15) * 0.84,
+        ny: Math.pow(Math.random(), 1.15),
         r: big ? 1.6 + Math.random() * 1.5 : 0.5 + Math.random() * 0.9,
         big: big,
         a: big ? 0.85 : 0.4 + Math.random() * 0.55,
@@ -737,7 +776,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
       });
     }
     flies = [];
-    var fc = reduceMotion ? 0 : (W < 500 ? 8 : 14);
+    var fc = 0;
     for (var j = 0; j < fc; j++) {
       flies.push({ x: Math.random(), y: 0.8 + Math.random() * 0.16, ph: Math.random() * 10, sp: 0.2 + Math.random() * 0.5, r: 1 + Math.random() * 1.2 });
     }
@@ -767,7 +806,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
   function spawnMeteor(opts) {
     opts = opts || {};
     var ang = (opts.angle != null ? opts.angle : 205 + Math.random() * 20) * Math.PI / 180;
-    var speed = (opts.speed || 0.9 + Math.random() * 0.6) * Math.max(W, 500) / 900;
+    var speed = (opts.speed || 0.5 + Math.random() * 0.4) * Math.max(W, 500) / 900;
     meteors.push({
       x: opts.x != null ? opts.x : W * (0.3 + Math.random() * 0.8),
       y: opts.y != null ? opts.y : H * (Math.random() * 0.35) - 20,
@@ -775,7 +814,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
       vy: -Math.sin(ang) * speed,
       len: 90 + Math.random() * 150,
       life: 0,
-      max: 900 + Math.random() * 600
+      max: opts.speed ? 900 + Math.random() * 600 : 1600 + Math.random() * 900
     });
   }
 
@@ -816,6 +855,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
 
     parallax.x += (parallax.tx - parallax.x) * 0.04;
     parallax.y += (parallax.ty - parallax.y) * 0.04;
+    deep.style.transform = "translate3d(" + (-parallax.x * 10).toFixed(2) + "px," + (-parallax.y * 8).toFixed(2) + "px,0) scale(1.04)";
 
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = "lighter";
@@ -853,7 +893,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
       nextMeteor -= dt;
       if (nextMeteor <= 0) {
         spawnMeteor();
-        nextMeteor = 3500 + Math.random() * 6000;
+        nextMeteor = started ? 2200 + Math.random() * 4200 : 3500 + Math.random() * 6000;
       }
     }
 
@@ -881,6 +921,64 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
       ctx.lineTo(tx, ty);
       ctx.stroke();
       ctx.drawImage(SPR.white, me.x - 9, me.y - 9, 18, 18);
+    }
+
+    while (trail.length && now - trail[0].t > TRAIL_LIFE) trail.shift();
+    ctx.lineCap = "round";
+    for (var ti = 1; ti < trail.length; ti++) {
+      var ta = trail[ti - 1], tb = trail[ti];
+      if (ta.id !== tb.id) continue;
+      var tk = 1 - (now - tb.t) / TRAIL_LIFE;
+      if (tk <= 0) continue;
+      var tc = trailColor(tb.n);
+      ctx.strokeStyle = "rgb(" + tc + ")";
+      ctx.globalAlpha = tk * 0.22;
+      ctx.lineWidth = 16 * tk + 2;
+      ctx.beginPath(); ctx.moveTo(ta.x, ta.y); ctx.lineTo(tb.x, tb.y); ctx.stroke();
+      ctx.globalAlpha = tk * 0.7;
+      ctx.lineWidth = 6 * tk + 1.5;
+      ctx.beginPath(); ctx.moveTo(ta.x, ta.y); ctx.lineTo(tb.x, tb.y); ctx.stroke();
+      ctx.strokeStyle = "#fffaf0";
+      ctx.globalAlpha = tk * 0.95;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(ta.x, ta.y); ctx.lineTo(tb.x, tb.y); ctx.stroke();
+    }
+
+    for (var wi = waves.length - 1; wi >= 0; wi--) {
+      var wv = waves[wi];
+      wv.life += dt;
+      var wk = wv.life / wv.max;
+      if (wk >= 1) { waves.splice(wi, 1); continue; }
+      ctx.globalAlpha = (1 - wk) * 0.75;
+      ctx.strokeStyle = wv.color || "rgb(255,230,200)";
+      ctx.lineWidth = 2.5 * (1 - wk) + 0.5;
+      ctx.beginPath();
+      ctx.arc(wv.x, wv.y, wv.R * (1 - Math.pow(1 - wk, 3)), 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    if (hold) {
+      var lv = hold.level = Math.min(1, (now - hold.start) / CHARGE_TIME);
+      var pulse = 1 + Math.sin(now * 0.02) * 0.07 * lv;
+      var os = (26 + lv * 96) * pulse;
+      ctx.globalAlpha = 0.35 + 0.4 * lv;
+      ctx.drawImage(SPR.pink, hold.x - os, hold.y - os, os * 2, os * 2);
+      ctx.globalAlpha = 0.6 + 0.4 * lv;
+      ctx.drawImage(SPR.gold, hold.x - os / 2, hold.y - os / 2, os, os);
+      for (var oi = 0; oi < 6; oi++) {
+        var oa = now * 0.004 * (1 + lv * 2.5) + oi * Math.PI / 3;
+        var orr = 46 - lv * 24;
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(SPR.white, hold.x + Math.cos(oa) * orr - 5, hold.y + Math.sin(oa) * orr - 5, 10, 10);
+      }
+      if (!reduceMotion && Math.random() < 0.7) {
+        var ia = Math.random() * Math.PI * 2, ir = 60 + Math.random() * 50;
+        particles.push({ x: hold.x + Math.cos(ia) * ir, y: hold.y + Math.sin(ia) * ir, vx: -Math.cos(ia) * ir / 320, vy: -Math.sin(ia) * ir / 320, life: 0, max: 320, size: 3 + Math.random() * 5, spr: Math.random() < 0.5 ? SPR.lilac : SPR.gold, g: 0, drag: 1 });
+      }
+      if (lv >= 1) {
+        if (press) press.done = true;
+        releaseCharge();
+      }
     }
 
     for (var p = particles.length - 1; p >= 0; p--) {
@@ -1110,6 +1208,10 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
     if (pendingFinale) {
       pendingFinale = false;
       setTimeout(finale, 450);
+    } else if (TIPS[litCount] && !tipsShown[litCount]) {
+      var tipText = TIPS[litCount];
+      tipsShown[litCount] = true;
+      setTimeout(function () { tip(tipText); }, 700);
     }
   }
   card.addEventListener("click", closeCard);
@@ -1226,6 +1328,9 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
     body.classList.remove("final");
     finished = false;
     litCount = 0;
+    tipsShown = {};
+    clearTimeout(tipTimer);
+    hint.innerHTML = HINT_START;
     Object.keys(lines).forEach(function (k) { lines[k].el.remove(); });
     lines = {};
     finalTitle.innerHTML = "";
@@ -1245,18 +1350,55 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
   var toast = $("toast");
   var moonIdx = 0;
   var toastTimer = 0;
+  function showToast(text, ms) {
+    toast.textContent = text;
+    toast.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove("on"); }, ms || 2600);
+  }
+  var moonDrag = null, suppressMoonClick = false, phaseRaf = 0, lastPhaseName = "";
+  function phaseName(p) {
+    if (p < 0.06) return "полнолуние 🌕";
+    if (p < 0.3) return "убывающая луна";
+    if (p < 0.55) return "половинка луны";
+    if (p < 0.8) return "полумесяц";
+    return "тоненький серп 🌙";
+  }
+  moon.addEventListener("pointerdown", function (e) {
+    if (!body.classList.contains("in-sky")) return;
+    moonDrag = { x: e.clientX, start: moonPhase, moved: false };
+    try { moon.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  moon.addEventListener("pointermove", function (e) {
+    if (!moonDrag) return;
+    var dx = e.clientX - moonDrag.x;
+    if (!moonDrag.moved && Math.abs(dx) > 6) { moonDrag.moved = true; ensureAudio(); }
+    if (!moonDrag.moved) return;
+    moonPhase = Math.max(0, Math.min(1, moonDrag.start - dx / 150));
+    if (!phaseRaf) phaseRaf = requestAnimationFrame(function () { phaseRaf = 0; drawPhase(); });
+    var nm = phaseName(moonPhase);
+    if (nm !== lastPhaseName) {
+      lastPhaseName = nm;
+      showToast(nm, 1800);
+      chime(NOTES[Math.round(moonPhase * 4)] / 2, 0, 0.05);
+    }
+  });
+  function endMoonDrag() {
+    if (moonDrag && moonDrag.moved) suppressMoonClick = true;
+    moonDrag = null;
+  }
+  moon.addEventListener("pointerup", endMoonDrag);
+  moon.addEventListener("pointercancel", endMoonDrag);
   moon.addEventListener("click", function () {
     if (!body.classList.contains("in-sky")) { start(); return; }
+    if (suppressMoonClick) { suppressMoonClick = false; return; }
     ensureAudio();
     moon.classList.remove("wiggle");
     moon.offsetWidth;
     moon.classList.add("wiggle");
     chime(523.25, 0, 0.1);
     chime(783.99, 0.12, 0.08);
-    toast.textContent = MOON_LINES[moonIdx++ % MOON_LINES.length];
-    toast.classList.add("on");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toast.classList.remove("on"); }, 2600);
+    showToast(MOON_LINES[moonIdx++ % MOON_LINES.length]);
     var r = moon.getBoundingClientRect();
     burst(r.left + r.width / 2, r.top + r.height / 2, 18, 0.6, [SPR.gold, SPR.white]);
   });
@@ -1273,6 +1415,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
   function start() {
     if (started) return;
     started = true;
+    askMotion();
     ensureAudio();
     arpeggio([NOTES[0], NOTES[2], NOTES[4], NOTES[6]], 0.16, 0.1);
     body.classList.add("in-sky");
@@ -1304,12 +1447,250 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
     window.addEventListener("mousemove", function (e) { onMove(e.clientX, e.clientY); });
   }
 
-  canvas.addEventListener("click", function (e) {
+  var CATCH_LINES = [
+    "поймала! загадывай желание ✨",
+    "ловкая! это к удаче",
+    "звезда шепчет: у тебя всё получится",
+    "ещё одна — желание сбудется дважды",
+    "загадала? я никому не скажу 🤫",
+    "кажется, сегодня твой счастливый день",
+    "у тебя талант ловить звёзды",
+    "эта — на хорошее настроение",
+    "эта — на тёплые встречи",
+    "эта — просто так, потому что ты есть"
+  ];
+  var catches = 0;
+  var catchBadge = $("catchBadge");
+  var catchCount = $("catchCount");
+
+  function vibrate(p) { if (navigator.vibrate) { try { navigator.vibrate(p); } catch (err) {} } }
+
+  function floatMsg(x, y, text) {
+    var el = document.createElement("div");
+    el.className = "float-msg";
+    el.textContent = text;
+    el.style.left = Math.max(130, Math.min(W - 130, x)) + "px";
+    el.style.top = Math.max(110, Math.min(H - 140, y)) + "px";
+    body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 3500);
+  }
+
+  function distToSeg(px, py, ax, ay, bx, by) {
+    var dx = bx - ax, dy = by - ay;
+    var l2 = dx * dx + dy * dy;
+    var t = l2 ? ((px - ax) * dx + (py - ay) * dy) / l2 : 0;
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    var cx = ax + t * dx - px, cy = ay + t * dy - py;
+    return Math.sqrt(cx * cx + cy * cy);
+  }
+
+  function hitMeteor(x, y) {
+    for (var i = meteors.length - 1; i >= 0; i--) {
+      var me = meteors[i];
+      if (me.x < -20 || me.x > W + 20 || me.y < -20 || me.y > H + 20) continue;
+      var vl = Math.sqrt(me.vx * me.vx + me.vy * me.vy);
+      var tx = me.x - (me.vx / vl) * me.len * 0.7, ty = me.y - (me.vy / vl) * me.len * 0.7;
+      if (distToSeg(x, y, me.x, me.y, tx, ty) < 42) { catchMeteor(i); return true; }
+    }
+    return false;
+  }
+
+  function catchMeteor(i) {
+    var me = meteors[i];
+    meteors.splice(i, 1);
+    var vl = Math.sqrt(me.vx * me.vx + me.vy * me.vy);
+    for (var k = 1; k < 9; k++) {
+      var f = k / 9;
+      burst(me.x - (me.vx / vl) * me.len * f, me.y - (me.vy / vl) * me.len * f, 5, 0.35, [SPR.gold, SPR.white]);
+    }
+    burst(me.x, me.y, 44, 1.2, [SPR.gold, SPR.white, SPR.pink]);
+    waves.push({ x: me.x, y: me.y, life: 0, max: 900, R: 90 });
+    arpeggio([NOTES[3], NOTES[5], NOTES[7], NOTES[9]], 0.06, 0.1);
+    vibrate(25);
+    catches++;
+    catchCount.textContent = catches;
+    catchBadge.classList.add("on");
+    catchBadge.classList.remove("bump");
+    catchBadge.offsetWidth;
+    catchBadge.classList.add("bump");
+    floatMsg(me.x, me.y, CATCH_LINES[(catches - 1) % CATCH_LINES.length]);
+  }
+
+  var chargeOsc = null, chargeGain = null;
+  function startCharge(x, y) {
+    hold = { x: x, y: y, start: performance.now(), level: 0 };
+    vibrate(10);
+    if (!soundOn || !audio || !bus) return;
+    var t0 = audio.currentTime;
+    chargeOsc = audio.createOscillator();
+    chargeOsc.type = "sine";
+    chargeOsc.frequency.setValueAtTime(330, t0);
+    chargeOsc.frequency.exponentialRampToValueAtTime(1320, t0 + CHARGE_TIME / 1000);
+    chargeGain = audio.createGain();
+    chargeGain.gain.setValueAtTime(0.0001, t0);
+    chargeGain.gain.exponentialRampToValueAtTime(0.045, t0 + 0.3);
+    chargeOsc.connect(chargeGain);
+    chargeGain.connect(bus.master);
+    chargeGain.connect(bus.delay);
+    chargeOsc.start(t0);
+  }
+  function stopChargeSound() {
+    if (!chargeOsc) return;
+    var t0 = audio.currentTime;
+    chargeGain.gain.cancelScheduledValues(t0);
+    chargeGain.gain.setValueAtTime(chargeGain.gain.value, t0);
+    chargeGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.15);
+    chargeOsc.stop(t0 + 0.2);
+    chargeOsc = null;
+    chargeGain = null;
+  }
+  function cancelCharge() {
+    stopChargeSound();
+    hold = null;
+  }
+  function releaseCharge() {
+    if (!hold) return;
+    var h = hold;
+    hold = null;
+    stopChargeSound();
+    if (h.level >= 1) heartBurst(h.x, h.y);
+    else {
+      var lv = Math.max(0.15, h.level);
+      burst(h.x, h.y, 30 + lv * 100, 0.8 + lv * 1.8);
+      waves.push({ x: h.x, y: h.y, life: 0, max: 1000, R: 60 + lv * 170 });
+      arpeggio([NOTES[0], NOTES[2], NOTES[4]], 0.05, 0.06 + lv * 0.06);
+      vibrate(20);
+    }
+  }
+  function heartBurst(x, y) {
+    var sc = Math.min(W, H) / 390 * 0.3;
+    for (var k = 0; k < 150; k++) {
+      var h = heartXY(k / 150 * Math.PI * 2);
+      var j = 0.92 + Math.random() * 0.16;
+      particles.push({ x: x, y: y, vx: h.x / 16 * sc * j, vy: h.y / 16 * sc * j, life: 0, max: 1700 + Math.random() * 700, size: 5 + Math.random() * 8, spr: k % 2 ? SPR.pink : SPR.gold, g: 0.00002, drag: 0.972 });
+    }
+    burst(x, y, 40, 0.6, [SPR.white, SPR.gold]);
+    waves.push({ x: x, y: y, life: 0, max: 1200, R: 230, color: "rgb(255,190,215)" });
+    waves.push({ x: x, y: y, life: 0, max: 1500, R: 150 });
+    arpeggio([NOTES[0], NOTES[3], NOTES[5], NOTES[7], NOTES[9]], 0.08, 0.11);
+    vibrate([30, 50, 30]);
+  }
+
+  function addTrail(x, y) {
+    var lastP = trail.length ? trail[trail.length - 1] : null;
+    if (lastP && lastP.id === strokeId) {
+      var dx = x - lastP.x, dy = y - lastP.y;
+      var dd = Math.sqrt(dx * dx + dy * dy);
+      if (dd < 3) return;
+      strokeDist += dd;
+      if (strokeDist > 80) {
+        strokeDist = 0;
+        var idx = Math.max(0, Math.min(NOTES.length - 1, Math.round((1 - y / H) * (NOTES.length - 1))));
+        chime(NOTES[idx], 0, 0.035);
+      }
+    }
+    trail.push({ x: x, y: y, t: performance.now(), id: strokeId, n: strokeN++ });
+    if (trail.length > 320) trail.shift();
+  }
+
+  function onSkyDown(x, y, pid) {
     if (!started) return;
     ensureAudio();
-    burst(e.clientX, e.clientY, 16, 0.6);
-    chime(NOTES[(Math.random() * NOTES.length) | 0] / 2, 0, 0.06);
+    press = { x: x, y: y, moved: false, done: false };
+    if (hitMeteor(x, y)) { press.done = true; return; }
+    strokeId++;
+    strokeN = 0;
+    strokeDist = 0;
+    var my = press;
+    press.timer = setTimeout(function () {
+      if (press === my && !my.moved && !my.done) startCharge(my.x, my.y);
+    }, 300);
+    if (pid != null) { try { canvas.setPointerCapture(pid); } catch (err) {} }
+  }
+  function onSkyMove(x, y) {
+    if (!press || press.done) return;
+    var dx = x - press.x, dy = y - press.y;
+    if (!press.moved && dx * dx + dy * dy > 120) {
+      press.moved = true;
+      clearTimeout(press.timer);
+      if (hold) cancelCharge();
+      addTrail(press.x, press.y);
+    }
+    if (press.moved) {
+      addTrail(x, y);
+      hitMeteor(x, y);
+    }
+  }
+  function onSkyUp() {
+    if (!press) return;
+    clearTimeout(press.timer);
+    if (hold) releaseCharge();
+    else if (!press.moved && !press.done) {
+      burst(press.x, press.y, 16, 0.6);
+      chime(NOTES[(Math.random() * NOTES.length) | 0] / 2, 0, 0.06);
+    }
+    press = null;
+  }
+  if (window.PointerEvent) {
+    canvas.addEventListener("pointerdown", function (e) { onSkyDown(e.clientX, e.clientY, e.pointerId); });
+    canvas.addEventListener("pointermove", function (e) { onSkyMove(e.clientX, e.clientY); });
+    canvas.addEventListener("pointerup", onSkyUp);
+    canvas.addEventListener("pointercancel", onSkyUp);
+  } else {
+    canvas.addEventListener("touchstart", function (e) { var t = e.touches[0]; onSkyDown(t.clientX, t.clientY, null); }, { passive: true });
+    canvas.addEventListener("touchmove", function (e) { var t = e.touches[0]; onSkyMove(t.clientX, t.clientY); }, { passive: true });
+    canvas.addEventListener("touchend", onSkyUp);
+    canvas.addEventListener("mousedown", function (e) { onSkyDown(e.clientX, e.clientY, null); });
+    canvas.addEventListener("mousemove", function (e) { onSkyMove(e.clientX, e.clientY); });
+    canvas.addEventListener("mouseup", onSkyUp);
+  }
+  document.addEventListener("touchmove", function (e) { if (e.touches.length < 2) e.preventDefault(); }, { passive: false });
+
+  var lastShake = 0, lastAcc = null;
+  window.addEventListener("devicemotion", function (e) {
+    var a = e.accelerationIncludingGravity;
+    if (!a || a.x == null) return;
+    if (lastAcc && started) {
+      var dlt = Math.abs(a.x - lastAcc.x) + Math.abs(a.y - lastAcc.y) + Math.abs(a.z - lastAcc.z);
+      var nowT = Date.now();
+      if (dlt > 34 && nowT - lastShake > 2500) {
+        lastShake = nowT;
+        shower(reduceMotion ? 4 : 16, 110);
+        arpeggio([NOTES[9], NOTES[8], NOTES[6], NOTES[5], NOTES[3]], 0.07, 0.08);
+        floatMsg(W / 2, H * 0.3, "звездопад — для тебя ✨");
+        vibrate([20, 40, 20]);
+      }
+    }
+    lastAcc = { x: a.x, y: a.y, z: a.z };
   });
+
+  function askMotion() {
+    try {
+      if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+        DeviceMotionEvent.requestPermission().catch(function () {});
+      } else if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission().catch(function () {});
+      }
+    } catch (err) {}
+  }
+
+  var isTouch = "ontouchstart" in window || (navigator.maxTouchPoints || 0) > 0;
+  var TIPS = {
+    1: "☄ падающие звёзды можно поймать — коснись их",
+    3: "проведи пальцем по небу — оно рисует светом",
+    5: "а теперь подержи палец на небе пару секунд…",
+    7: "луну можно потянуть в сторону 🌙"
+  };
+  if (isTouch) TIPS[8] = "встряхни телефон — и начнётся звездопад";
+  var tipsShown = {};
+  var tipTimer = 0;
+  var HINT_START = hint.innerHTML;
+  function tip(text) {
+    hint.innerHTML = text;
+    hint.classList.add("on");
+    clearTimeout(tipTimer);
+    tipTimer = setTimeout(function () { hint.classList.remove("on"); }, 5500);
+  }
 
   window.addEventListener("deviceorientation", function (e) {
     if (e.gamma == null || e.beta == null) return;
@@ -1334,6 +1715,7 @@ body.in-sky .sound{opacity:1;pointer-events:auto}
 
   splitChars($("title"), "Сегодня\nнебо светит\nдля *тебя", 0.7, 0.055);
   renderMoon();
+  drawPhase();
   renderCloud("cloudA", 21);
   renderCloud("cloudB", 42);
   buildStars();
